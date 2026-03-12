@@ -183,6 +183,36 @@
         background-color: #2a241d;
       }
 
+      html[data-theme="dark"] .border-t.border-slate-900 {
+        border-color: var(--gg-muted);
+      }
+
+      html[data-theme="dark"] .border-t.border-slate-200 {
+        border-color: var(--gg-border);
+      }
+
+      html[data-theme="dark"] .border-b-2.border-slate-800 {
+        border-color: var(--gg-accent);
+      }
+
+      html[data-theme="dark"] .text-slate-500,
+      html[data-theme="dark"] .text-slate-400 {
+        color: var(--gg-muted);
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--gg-accent);
+        outline-offset: 2px;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible {
+        box-shadow: 0 0 0 3px rgba(0, 167, 218, 0.25);
+      }
+
       table {
         background: var(--gg-card);
       }
@@ -205,6 +235,28 @@
       }
 
       #theme-toggle:hover {
+        border-color: var(--gg-accent);
+        color: var(--gg-accent);
+      }
+
+      #lang-toggle {
+        position: fixed;
+        right: 18px;
+        bottom: 64px;
+        z-index: 9999;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--gg-border);
+        background: var(--gg-card);
+        color: var(--gg-ink);
+        font-family: "Trebuchet MS", "Gill Sans", "Century Gothic", sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        box-shadow: var(--gg-shadow);
+      }
+
+      #lang-toggle:hover {
         border-color: var(--gg-accent);
         color: var(--gg-accent);
       }
@@ -272,6 +324,34 @@
         color: var(--gg-accent);
         text-decoration: underline;
       }
+
+      #gg-toast {
+        position: fixed;
+        right: 18px;
+        bottom: 110px;
+        z-index: 9999;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--gg-border);
+        background: var(--gg-card);
+        color: var(--gg-ink);
+        font-size: 12px;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+        box-shadow: var(--gg-shadow);
+      }
+
+      #gg-toast.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .gg-missing {
+        border-color: #d14343 !important;
+        box-shadow: 0 0 0 2px rgba(209, 67, 67, 0.25);
+      }
     </style>
   </head>
   <body>
@@ -282,14 +362,15 @@
     />
     <div id="root"></div>
     <div id="gg-support">
-      Équipe Techno · Service du développement pédagogique<br>
-      Support aux étudiant·e·s : <a href="mailto:aidetechno@cgodin.qc.ca">aidetechno@cgodin.qc.ca</a> ou par MIO (aide techno)<br>
-      Support aux enseignant·e·s : <a href="mailto:cptic@cgodin.qc.ca">cptic@cgodin.qc.ca</a>
+      <strong>Équipe Techno · Service du développement pédagogique</strong><br>
+      <strong>Confidentialité</strong> · Aucune donnée n’est stockée; tout se fait localement dans votre navigateur.<br>
+      <strong>Support</strong> · Étudiant·e·s : <a href="mailto:aidetechno@cgodin.qc.ca">aidetechno@cgodin.qc.ca</a> | Enseignant·e·s : <a href="mailto:cptic@cgodin.qc.ca">cptic@cgodin.qc.ca</a>
     </div>
     <div id="gg-credit">
       Cette page a été inspirée par le Générateur d'IAgraphie conçu par le Cégep
       Marie-Victorin. <a href="https://iagraphie.cegepmv.ca/" target="_blank" rel="noopener noreferrer">iagraphie.cegepmv.ca</a>
     </div>
+    <div id="gg-toast" role="status" aria-live="polite"></div>
     <script>
       (function () {
         var storageKey = "gg-theme";
@@ -311,6 +392,274 @@
           button.textContent = next === "dark" ? "☀️" : "🌓";
         });
         document.body.appendChild(button);
+      })();
+    </script>
+    <script>
+      (function () {
+        var LANGS = ["fr", "en", "es", "it"];
+        var LABELS = { fr: "FR", en: "EN", es: "ES", it: "IT" };
+        var storageKey = "gg-lang";
+        var lang = localStorage.getItem(storageKey) || "fr";
+
+        var TEXT = {
+          fr: {
+            "Déclaration d'intégrité intellectuelle": "Déclaration d'intégrité intellectuelle",
+            "DÉCLARATION D'INTÉGRITÉ INTELLECTUELLE": "DÉCLARATION D'INTÉGRITÉ INTELLECTUELLE",
+            "Je, soussigné(e) ": "Je, soussigné(e) ",
+            ", atteste que le travail remis dans le cadre du cours ": ", atteste que le travail remis dans le cadre du cours ",
+            " est le fruit de ma propre réflexion, rédaction et qu'il respecte les règles de l'intégrité intellectuelle du Cégep.": " est le fruit de ma propre réflexion, rédaction et qu'il respecte les règles de l'intégrité intellectuelle du Cégep.",
+            "J'ai identifié et cité toutes les sources documentaires utilisées dans la ": "J'ai identifié et cité toutes les sources documentaires utilisées dans la ",
+            "Bibliographie": "Bibliographie",
+            "J'ai fait preuve de transparence quant à l'usage d'outils numériques (voir section IAgraphie ci-dessous).": "J'ai fait preuve de transparence quant à l'usage d'outils numériques (voir section IAgraphie ci-dessous).",
+            "Déclaration IAgraphie": "Déclaration IAgraphie",
+            "Aucune assistance d'IA générative": "Aucune assistance d'IA générative",
+            "Je certifie n'avoir utilisé aucun outil d'intelligence artificielle pour la réalisation de ce travail.": "Je certifie n'avoir utilisé aucun outil d'intelligence artificielle pour la réalisation de ce travail.",
+            "Usage déclaré (IAgraphie)": "Usage déclaré (IAgraphie)",
+            "J'ai utilisé les outils suivants pour soutenir mon travail:": "J'ai utilisé les outils suivants pour soutenir mon travail:",
+            "Outil": "Outil",
+            "Nature de la contribution": "Nature de la contribution",
+            "Précisions / Prompt": "Précisions / Prompt",
+            "Signature de l'étudiant(e)": "Signature de l'étudiant(e)",
+            "Signature": "Signature",
+            "Date": "Date",
+            "Non spécifié": "Non spécifié",
+            "DÉCLARATION IAGRAPHIE": "DÉCLARATION IAGRAPHIE"
+          },
+          en: {
+            "Déclaration d'intégrité intellectuelle": "Academic Integrity Declaration",
+            "DÉCLARATION D'INTÉGRITÉ INTELLECTUELLE": "ACADEMIC INTEGRITY DECLARATION",
+            "Je, soussigné(e) ": "I, the undersigned, ",
+            ", atteste que le travail remis dans le cadre du cours ": " hereby certify that the work submitted for the course ",
+            " est le fruit de ma propre réflexion, rédaction et qu'il respecte les règles de l'intégrité intellectuelle du Cégep.": " is the result of my own thinking and writing, and that it complies with the College's academic integrity rules.",
+            "J'ai identifié et cité toutes les sources documentaires utilisées dans la ": "I have identified and cited all documentary sources used in the ",
+            "Bibliographie": "Bibliography",
+            "J'ai fait preuve de transparence quant à l'usage d'outils numériques (voir section IAgraphie ci-dessous).": "I have been transparent about the use of digital tools (see the IAgraphie section below).",
+            "Déclaration IAgraphie": "IAgraphie Declaration",
+            "Aucune assistance d'IA générative": "No generative AI assistance",
+            "Je certifie n'avoir utilisé aucun outil d'intelligence artificielle pour la réalisation de ce travail.": "I certify that I did not use any artificial intelligence tools to complete this work.",
+            "Usage déclaré (IAgraphie)": "Declared use (IAgraphie)",
+            "J'ai utilisé les outils suivants pour soutenir mon travail:": "I used the following tools to support my work:",
+            "Outil": "Tool",
+            "Nature de la contribution": "Nature of the contribution",
+            "Précisions / Prompt": "Details / Prompt",
+            "Signature de l'étudiant(e)": "Student signature",
+            "Signature": "Signature",
+            "Date": "Date",
+            "Non spécifié": "Not specified",
+            "DÉCLARATION IAGRAPHIE": "IAGRAPHIE DECLARATION"
+          },
+          es: {
+            "Déclaration d'intégrité intellectuelle": "Declaración de integridad académica",
+            "DÉCLARATION D'INTÉGRITÉ INTELLECTUELLE": "DECLARACIÓN DE INTEGRIDAD ACADÉMICA",
+            "Je, soussigné(e) ": "Yo, el/la abajo firmante, ",
+            ", atteste que le travail remis dans le cadre du cours ": " certifico que el trabajo entregado en el curso ",
+            " est le fruit de ma propre réflexion, rédaction et qu'il respecte les règles de l'intégrité intellectuelle du Cégep.": " es fruto de mi propia reflexión y redacción, y que respeta las normas de integridad académica del Cégep.",
+            "J'ai identifié et cité toutes les sources documentaires utilisées dans la ": "He identificado y citado todas las fuentes documentales utilizadas en la ",
+            "Bibliographie": "Bibliografía",
+            "J'ai fait preuve de transparence quant à l'usage d'outils numériques (voir section IAgraphie ci-dessous).": "He sido transparente sobre el uso de herramientas digitales (véase la sección IAgraphie a continuación).",
+            "Déclaration IAgraphie": "Declaración IAgraphie",
+            "Aucune assistance d'IA générative": "Sin asistencia de IA generativa",
+            "Je certifie n'avoir utilisé aucun outil d'intelligence artificielle pour la réalisation de ce travail.": "Certifico que no utilicé ninguna herramienta de inteligencia artificial para la realización de este trabajo.",
+            "Usage déclaré (IAgraphie)": "Uso declarado (IAgraphie)",
+            "J'ai utilisé les outils suivants pour soutenir mon travail:": "He utilizado las siguientes herramientas para apoyar mi trabajo:",
+            "Outil": "Herramienta",
+            "Nature de la contribution": "Naturaleza de la contribución",
+            "Précisions / Prompt": "Detalles / Prompt",
+            "Signature de l'étudiant(e)": "Firma del/de la estudiante",
+            "Signature": "Firma",
+            "Date": "Fecha",
+            "Non spécifié": "No especificado",
+            "DÉCLARATION IAGRAPHIE": "DECLARACIÓN IAGRAPHIE"
+          },
+          it: {
+            "Déclaration d'intégrité intellectuelle": "Dichiarazione di integrità accademica",
+            "DÉCLARATION D'INTÉGRITÉ INTELLECTUELLE": "DICHIARAZIONE DI INTEGRITÀ ACCADEMICA",
+            "Je, soussigné(e) ": "Io, sottoscritto/a, ",
+            ", atteste que le travail remis dans le cadre du cours ": " attesto che il lavoro consegnato per il corso ",
+            " est le fruit de ma propre réflexion, rédaction et qu'il respecte les règles de l'intégrité intellectuelle du Cégep.": " è frutto della mia riflessione e redazione, e che rispetta le norme di integrità accademica del Cégep.",
+            "J'ai identifié et cité toutes les sources documentaires utilisées dans la ": "Ho identificato e citato tutte le fonti documentali utilizzate nella ",
+            "Bibliographie": "Bibliografia",
+            "J'ai fait preuve de transparence quant à l'usage d'outils numériques (voir section IAgraphie ci-dessous).": "Ho dimostrato trasparenza nell'uso di strumenti digitali (vedi la sezione IAgraphie qui sotto).",
+            "Déclaration IAgraphie": "Dichiarazione IAgraphie",
+            "Aucune assistance d'IA générative": "Nessuna assistenza di IA generativa",
+            "Je certifie n'avoir utilisé aucun outil d'intelligence artificielle pour la réalisation de ce travail.": "Dichiaro di non aver utilizzato strumenti di intelligenza artificiale per la realizzazione di questo lavoro.",
+            "Usage déclaré (IAgraphie)": "Uso dichiarato (IAgraphie)",
+            "J'ai utilisé les outils suivants pour soutenir mon travail:": "Ho utilizzato i seguenti strumenti per supportare il mio lavoro:",
+            "Outil": "Strumento",
+            "Nature de la contribution": "Natura del contributo",
+            "Précisions / Prompt": "Dettagli / Prompt",
+            "Signature de l'étudiant(e)": "Firma dello/a studente/ssa",
+            "Signature": "Firma",
+            "Date": "Data",
+            "Non spécifié": "Non specificato",
+            "DÉCLARATION IAGRAPHIE": "DICHIARAZIONE IAGRAPHIE"
+          }
+        };
+
+        function getPreviewNodes() {
+          var nodes = [];
+          var preview = document.querySelector("div.min-h-\\[600px\\]");
+          if (preview) nodes.push(preview);
+          var hidden = document.querySelector('div[style*="left: -9999px"]');
+          if (hidden) nodes.push(hidden);
+          return nodes;
+        }
+
+        function translateNode(root, map) {
+          if (!root) return;
+          var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+          var node;
+          while ((node = walker.nextNode())) {
+            var value = node.nodeValue;
+            var orig = node._ggOrig || value;
+            if (!node._ggOrig) node._ggOrig = orig;
+            if (Object.prototype.hasOwnProperty.call(map, orig)) {
+              node.nodeValue = map[orig];
+            }
+          }
+        }
+
+        function applyLang() {
+          var map = TEXT[lang] || TEXT.fr;
+          document.documentElement.setAttribute("data-lang", lang);
+          var nodes = getPreviewNodes();
+          nodes.forEach(function (n) { translateNode(n, map); });
+          if (button) {
+            button.textContent = LABELS[lang] || "FR";
+            button.setAttribute("aria-label", "Langue: " + (LABELS[lang] || "FR"));
+          }
+        }
+
+        function nextLang() {
+          var idx = LANGS.indexOf(lang);
+          return LANGS[(idx + 1) % LANGS.length];
+        }
+
+        var button = document.createElement("button");
+        button.id = "lang-toggle";
+        button.type = "button";
+        button.addEventListener("click", function () {
+          lang = nextLang();
+          localStorage.setItem(storageKey, lang);
+          applyLang();
+        });
+        document.body.appendChild(button);
+
+        function startObserver() {
+          var root = document.getElementById("root") || document.body;
+          if (!root) return;
+          var observer = new MutationObserver(applyLang);
+          observer.observe(root, { childList: true, subtree: true });
+          applyLang();
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", startObserver);
+        } else {
+          startObserver();
+        }
+      })();
+    </script>
+    <script>
+      (function () {
+        var pending = false;
+        function enhanceAccessibility() {
+          if (pending) return;
+          pending = true;
+          requestAnimationFrame(function () {
+            pending = false;
+
+            // Icon-only buttons: promote title to aria-label.
+            var buttons = document.querySelectorAll("button");
+            buttons.forEach(function (btn) {
+              var text = (btn.textContent || "").trim();
+              if (!text && !btn.getAttribute("aria-label")) {
+                var title = btn.getAttribute("title");
+                if (title) btn.setAttribute("aria-label", title);
+              }
+            });
+
+            // Regions with headings.
+            var mainCard = document.querySelector(".bg-white.p-6.rounded-xl");
+            var mainHeading = mainCard ? mainCard.querySelector("h1") : null;
+            if (mainCard && mainHeading) {
+              if (!mainHeading.id) mainHeading.id = "gg-main-title";
+              mainCard.setAttribute("role", "region");
+              mainCard.setAttribute("aria-labelledby", mainHeading.id);
+            }
+
+            var previewHeader = document.querySelector("h2");
+            var previewPanel = previewHeader ? previewHeader.closest("div") : null;
+            if (previewHeader && previewPanel) {
+              if (!previewHeader.id) previewHeader.id = "gg-preview-title";
+              previewPanel.setAttribute("role", "region");
+              previewPanel.setAttribute("aria-labelledby", previewHeader.id);
+            }
+
+            var iaHeading = Array.from(document.querySelectorAll("h3"))
+              .find(function (h3) { return (h3.textContent || "").trim() === "Déclaration IAgraphie"; });
+            if (iaHeading) {
+              if (!iaHeading.id) iaHeading.id = "gg-ia-title";
+              var iaSection = iaHeading.closest("div.mt-8.border-t");
+              if (iaSection) {
+                iaSection.setAttribute("role", "region");
+                iaSection.setAttribute("aria-labelledby", iaHeading.id);
+              }
+            }
+
+            // Copy validation alert (non-blocking).
+            var copyButton = Array.from(document.querySelectorAll("button"))
+              .find(function (btn) {
+                var t = (btn.textContent || "").trim();
+                return t === "Copier pour Word" || t === "Copié !";
+              });
+            if (copyButton) {
+              function showToast(message) {
+                var toast = document.getElementById("gg-toast");
+                if (!toast) return;
+                toast.textContent = message;
+                toast.classList.add("is-visible");
+                clearTimeout(showToast._t);
+                showToast._t = setTimeout(function () {
+                  toast.classList.remove("is-visible");
+                }, 2200);
+              }
+
+              if (!copyButton.dataset.ggBound) {
+                copyButton.dataset.ggBound = "1";
+                copyButton.addEventListener("click", function () {
+                  var nameInput = document.querySelector('input[name="studentName"]');
+                  var courseInput = document.querySelector('input[name="courseCode"]');
+                  var dateInput = document.querySelector('input[name="date"]');
+                  if (nameInput) {
+                    nameInput.classList.toggle("gg-missing", !nameInput.value.trim());
+                  }
+                  if (courseInput) {
+                    courseInput.classList.toggle("gg-missing", !courseInput.value.trim());
+                  }
+                  if (dateInput) {
+                    dateInput.classList.toggle("gg-missing", !dateInput.value.trim());
+                  }
+                  showToast("Copié dans le presse-papiers.");
+                });
+              }
+            }
+          });
+        }
+
+        function startObserver() {
+          var root = document.getElementById("root") || document.body;
+          if (!root) return;
+          var observer = new MutationObserver(enhanceAccessibility);
+          observer.observe(root, { childList: true, subtree: true });
+          enhanceAccessibility();
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", startObserver);
+        } else {
+          startObserver();
+        }
       })();
     </script>
     <script>
