@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Générateur d'IAgraphie | Cégep Gérald-Godin</title>
+    <script type="module" crossorigin src="assets/index-DFYjo6Hh.js"></script>
+    <link rel="stylesheet" crossorigin href="assets/index-hq9OY1wG.css">
+    <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/fr/7/73/Logo-C%C3%A9gep_G%C3%A9rald-Godin.svg">
+    <style>
+      :root {
+        --gg-bg: #f3efe7;
+        --gg-ink: #1b1a17;
+        --gg-muted: #6b5e53;
+        --gg-card: #fffdf7;
+        --gg-border: #d9cbb8;
+        --gg-accent: #00a7da;
+        --gg-accent-2: #f2b705;
+        --gg-shadow: 0 12px 30px rgba(27, 26, 23, 0.12);
+      }
+
+      html[data-theme="dark"] {
+        --gg-bg: #14120f;
+        --gg-ink: #f2ece3;
+        --gg-muted: #b6a892;
+        --gg-card: #1f1b16;
+        --gg-border: #3a2f24;
+        --gg-accent: #f2b705;
+        --gg-accent-2: #00a7da;
+        --gg-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      body {
+        background: var(--gg-bg);
+        color: var(--gg-ink);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+          radial-gradient(900px 400px at 10% -10%, rgba(242, 183, 5, 0.18), transparent 60%),
+          radial-gradient(700px 380px at 90% 0%, rgba(0, 167, 218, 0.2), transparent 60%),
+          linear-gradient(160deg, rgba(255, 255, 255, 0.2), transparent 45%);
+      }
+
+      #root {
+        font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      }
+
+      h1, h2, h3 {
+        font-family: "Trebuchet MS", "Gill Sans", "Century Gothic", sans-serif;
+        letter-spacing: 0.06em;
+      }
+
+      h1.flex.items-center.gap-2::before {
+        content: "🧾";
+        font-size: 1.2em;
+        margin-right: 6px;
+      }
+
+      h1.flex.items-center.gap-2 svg {
+        display: none;
+      }
+
+      .min-h-screen {
+        background: transparent;
+      }
+
+      .max-w-6xl {
+        max-width: 980px;
+      }
+
+      .bg-white,
+      .bg-slate-50,
+      .bg-amber-50,
+      .bg-yellow-50 {
+        background-color: var(--gg-card);
+      }
+
+      .border,
+      .border-slate-200,
+      .border-slate-300,
+      .border-amber-200,
+      .border-yellow-200 {
+        border-color: var(--gg-border);
+      }
+
+      .text-slate-900,
+      .text-slate-800,
+      .text-slate-700,
+      .text-slate-600 {
+        color: var(--gg-ink);
+      }
+
+      .text-slate-500,
+      .text-slate-400 {
+        color: var(--gg-muted);
+      }
+
+      .text-indigo-600,
+      .text-indigo-700,
+      .text-emerald-700,
+      .text-amber-600,
+      .text-yellow-600,
+      .text-yellow-800 {
+        color: var(--gg-accent);
+      }
+
+      .bg-indigo-600 {
+        background-color: var(--gg-accent);
+      }
+
+      .hover\:bg-indigo-700:hover {
+        background-color: var(--gg-accent-2);
+        color: #1b1a17;
+      }
+
+      .ring-indigo-500,
+      .ring-emerald-500 {
+        --tw-ring-color: var(--gg-accent);
+      }
+
+      .border-indigo-500,
+      .border-emerald-500 {
+        border-color: var(--gg-accent);
+      }
+
+      .bg-indigo-50,
+      .bg-emerald-50 {
+        background-color: rgba(0, 167, 218, 0.08);
+      }
+
+      .shadow-lg,
+      .shadow-sm {
+        box-shadow: var(--gg-shadow);
+      }
+
+      .bg-white.p-6.rounded-xl {
+        border-left: 6px solid var(--gg-accent);
+        border-top-right-radius: 22px;
+        border-bottom-right-radius: 22px;
+      }
+
+      input,
+      select,
+      textarea {
+        background: rgba(255, 255, 255, 0.7);
+        border-color: var(--gg-border);
+        border-radius: 10px;
+      }
+
+      html[data-theme="dark"] input,
+      html[data-theme="dark"] select,
+      html[data-theme="dark"] textarea {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--gg-ink);
+      }
+
+      table {
+        background: var(--gg-card);
+      }
+
+      #theme-toggle {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 9999;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--gg-border);
+        background: var(--gg-card);
+        color: var(--gg-ink);
+        font-family: "Trebuchet MS", "Gill Sans", "Century Gothic", sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        box-shadow: var(--gg-shadow);
+      }
+
+      #theme-toggle:hover {
+        border-color: var(--gg-accent);
+        color: var(--gg-accent);
+      }
+
+      #gg-logo {
+        position: fixed;
+        left: 18px;
+        bottom: 18px;
+        width: 44px;
+        height: 44px;
+        padding: 6px;
+        border-radius: 12px;
+        background: var(--gg-card);
+        border: 1px solid var(--gg-border);
+        box-shadow: var(--gg-shadow);
+        z-index: 9998;
+      }
+
+      #gg-credit {
+        max-width: 720px;
+        margin: 24px auto 32px;
+        text-align: center;
+        font-size: 11px;
+        line-height: 1.4;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--gg-border);
+        background: rgba(255, 255, 255, 0.6);
+        color: var(--gg-muted);
+      }
+
+      html[data-theme="dark"] #gg-credit {
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      #gg-credit a {
+        color: var(--gg-accent);
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <img
+      id="gg-logo"
+      src="https://upload.wikimedia.org/wikipedia/fr/7/73/Logo-C%C3%A9gep_G%C3%A9rald-Godin.svg"
+      alt="Logo Cégep Gérald-Godin"
+    />
+    <div id="root"></div>
+    <div id="gg-credit">
+      Cette page a été inspirée par le Générateur d'IAgraphie conçu par le Cégep
+      Marie-Victorin. <a href="https://iagraphie.cegepmv.ca/" target="_blank" rel="noopener noreferrer">iagraphie.cegepmv.ca</a>
+    </div>
+    <script>
+      (function () {
+        var storageKey = "gg-theme";
+        var saved = localStorage.getItem(storageKey);
+        var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var theme = saved || (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+
+        var button = document.createElement("button");
+        button.id = "theme-toggle";
+        button.type = "button";
+        button.textContent = theme === "dark" ? "☀️" : "🌓";
+        button.setAttribute("aria-label", "Basculer le theme");
+        button.addEventListener("click", function () {
+          var current = document.documentElement.getAttribute("data-theme") || "light";
+          var next = current === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          localStorage.setItem(storageKey, next);
+          button.textContent = next === "dark" ? "☀️" : "🌓";
+        });
+        document.body.appendChild(button);
+      })();
+    </script>
+  </body>
+</html>
