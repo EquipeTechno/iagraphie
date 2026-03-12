@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Générateur d'IAgraphie | Cégep Gérald-Godin</title>
-    <script type="module" crossorigin src="assets/index-DFYjo6Hh.js"></script>
-    <link rel="stylesheet" crossorigin href="assets/index-hq9OY1wG.css">
+    <script type="module" crossorigin src="assets/app-main.js"></script>
+    <link rel="stylesheet" crossorigin href="assets/app-styles.css">
     <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/fr/7/73/Logo-C%C3%A9gep_G%C3%A9rald-Godin.svg">
     <style>
       :root {
@@ -159,6 +159,30 @@
         color: var(--gg-ink);
       }
 
+      html[data-theme="dark"] select option {
+        background: var(--gg-card);
+        color: var(--gg-ink);
+      }
+
+      html[data-theme="dark"] button.bg-yellow-50 {
+        background-color: var(--gg-accent-2);
+        color: #1b1a17;
+        border-color: var(--gg-accent-2);
+      }
+
+      html[data-theme="dark"] .bg-yellow-50.text-white,
+      html[data-theme="dark"] .bg-amber-50.text-white {
+        color: #1b1a17 !important;
+      }
+
+      html[data-theme="dark"] .bg-indigo-600.text-white {
+        color: #1b1a17 !important;
+      }
+
+      html[data-theme="dark"] .hover\:bg-slate-50:hover {
+        background-color: #2a241d;
+      }
+
       table {
         background: var(--gg-card);
       }
@@ -220,6 +244,34 @@
         color: var(--gg-accent);
         text-decoration: underline;
       }
+
+      .bg-amber-50 a {
+        color: var(--gg-accent);
+        text-decoration: underline;
+      }
+
+
+      #gg-support {
+        max-width: 720px;
+        margin: 24px auto 0;
+        text-align: center;
+        font-size: 11px;
+        line-height: 1.4;
+        padding: 10px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--gg-border);
+        background: rgba(255, 255, 255, 0.6);
+        color: var(--gg-muted);
+      }
+
+      html[data-theme="dark"] #gg-support {
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      #gg-support a {
+        color: var(--gg-accent);
+        text-decoration: underline;
+      }
     </style>
   </head>
   <body>
@@ -229,6 +281,11 @@
       alt="Logo Cégep Gérald-Godin"
     />
     <div id="root"></div>
+    <div id="gg-support">
+      Équipe Techno · Service du développement pédagogique<br>
+      Support aux étudiant·e·s : <a href="mailto:aidetechno@cgodin.qc.ca">aidetechno@cgodin.qc.ca</a> ou par MIO (aide techno)<br>
+      Support aux enseignant·e·s : <a href="mailto:cptic@cgodin.qc.ca">cptic@cgodin.qc.ca</a>
+    </div>
     <div id="gg-credit">
       Cette page a été inspirée par le Générateur d'IAgraphie conçu par le Cégep
       Marie-Victorin. <a href="https://iagraphie.cegepmv.ca/" target="_blank" rel="noopener noreferrer">iagraphie.cegepmv.ca</a>
@@ -254,6 +311,34 @@
           button.textContent = next === "dark" ? "☀️" : "🌓";
         });
         document.body.appendChild(button);
+      })();
+    </script>
+    <script>
+      (function () {
+        function moveInfoBlock() {
+          var infoBlock = document.querySelector(".bg-amber-50.border-amber-200");
+          var mainCard = document.querySelector(".bg-white.p-6.rounded-xl");
+          if (!infoBlock || !mainCard) return;
+          if (infoBlock.parentElement === mainCard.parentElement &&
+              infoBlock.previousElementSibling === mainCard) {
+            return;
+          }
+          mainCard.parentElement.insertBefore(infoBlock, mainCard.nextSibling);
+        }
+
+        function startObserver() {
+          var root = document.getElementById("root") || document.body;
+          if (!root) return;
+          var observer = new MutationObserver(moveInfoBlock);
+          observer.observe(root, { childList: true, subtree: true });
+          moveInfoBlock();
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", startObserver);
+        } else {
+          startObserver();
+        }
       })();
     </script>
   </body>
