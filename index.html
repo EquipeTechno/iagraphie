@@ -240,17 +240,14 @@
       }
 
       #lang-toggle {
-        position: fixed;
-        right: 18px;
-        bottom: 64px;
-        z-index: 9999;
-        padding: 8px 10px;
+        position: static;
+        padding: 6px 10px;
         border-radius: 999px;
         border: 1px solid var(--gg-border);
         background: var(--gg-card);
         color: var(--gg-ink);
         font-family: "Trebuchet MS", "Gill Sans", "Century Gothic", sans-serif;
-        font-size: 11px;
+        font-size: 10px;
         letter-spacing: 0.08em;
         text-transform: uppercase;
         box-shadow: var(--gg-shadow);
@@ -260,6 +257,24 @@
         border-color: var(--gg-accent);
         color: var(--gg-accent);
       }
+
+      .gg-word-logo {
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        margin-left: 6px;
+      }
+
+      .gg-instructions {
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      }
+
+      .gg-instructions:hover {
+        border-color: var(--gg-accent);
+        box-shadow: 0 10px 24px rgba(27, 26, 23, 0.18);
+        transform: translateY(-1px);
+      }
+
 
       #gg-logo {
         position: fixed;
@@ -535,6 +550,10 @@
           return LANGS[(idx + 1) % LANGS.length];
         }
 
+        var rootEl = null;
+        var observer = null;
+        var placing = false;
+
         var button = document.createElement("button");
         button.id = "lang-toggle";
         button.type = "button";
@@ -545,12 +564,31 @@
         });
         document.body.appendChild(button);
 
+        function placeLangToggle() {
+          if (placing || !rootEl || !observer) return;
+          var headerRow = document.querySelector("div.flex.items-center.justify-between.mb-2");
+          var copyButton = headerRow ? headerRow.querySelector("button") : null;
+          if (!headerRow || !copyButton) return;
+          if (button.parentElement === headerRow && button.nextElementSibling === copyButton) {
+            return;
+          }
+          placing = true;
+          observer.disconnect();
+          headerRow.insertBefore(button, copyButton);
+          observer.observe(rootEl, { childList: true, subtree: true });
+          placing = false;
+        }
+
         function startObserver() {
-          var root = document.getElementById("root") || document.body;
-          if (!root) return;
-          var observer = new MutationObserver(applyLang);
-          observer.observe(root, { childList: true, subtree: true });
+          rootEl = document.getElementById("root") || document.body;
+          if (!rootEl) return;
+          observer = new MutationObserver(function () {
+            applyLang();
+            placeLangToggle();
+          });
+          observer.observe(rootEl, { childList: true, subtree: true });
           applyLang();
+          placeLangToggle();
         }
 
         if (document.readyState === "loading") {
@@ -614,6 +652,14 @@
                 return t === "Copier pour Word" || t === "Copié !";
               });
             if (copyButton) {
+              if (!copyButton.querySelector(".gg-word-logo")) {
+                var wordLogo = document.createElement("img");
+                wordLogo.className = "gg-word-logo";
+                wordLogo.alt = "Word";
+                wordLogo.src = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Microsoft_Office_Word_%282025%E2%80%93present%29.svg";
+                copyButton.appendChild(wordLogo);
+              }
+
               function showToast(message) {
                 var toast = document.getElementById("gg-toast");
                 if (!toast) return;
